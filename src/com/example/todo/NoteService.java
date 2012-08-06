@@ -26,6 +26,10 @@ public class NoteService extends Service {
 		public void addNote(String title, String description) {
 			NoteService.this.addNote(title, description);
 		}
+
+		public void deleteNotes(String notes) {
+			NoteService.this.deleteNotes(notes);
+		}
 	}
 
 	@Override
@@ -79,5 +83,20 @@ public class NoteService extends Service {
 		ContentResolver cr = getContentResolver();
 		Uri uri = NoteTable.CONTENT_URI;
 		cr.insert(uri, cv);
+	}
+	
+	private void deleteNotes(String notes) {
+		ContentResolver cr = getContentResolver();
+		try {
+			JSONArray notesJsonArray = new JSONArray(notes);
+			for (int i = 0; i < notesJsonArray.length(); ++i) {
+				String id = notesJsonArray.getString(i);
+				Uri delUri = Uri.withAppendedPath(NoteTable.CONTENT_URI, id);
+				cr.delete(delUri, null, null);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }

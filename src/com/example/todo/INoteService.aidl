@@ -6,4 +6,5 @@ interface INoteService {
     // Primitive datatypes (such as int, boolean, etc.) can only be passed in.
     String getNotes();
     void addNote(String title, String description);
+    void deleteNotes(String notes);
 }

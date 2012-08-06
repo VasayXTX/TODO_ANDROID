@@ -1,7 +1,11 @@
 package com.example.todo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,8 +16,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -26,11 +28,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.todo.NoteProviderMetaData.NoteTable;
-
 public class MainActivity extends Activity implements OnClickListener {
 
 	private static final String TAG = "TODO.MainActivity";
+	private static final String TAG_SELECTED_ITEMS = "TODO.SelectedItems";
 
 	// UI elements
 	private ListView mNotesListView;
@@ -39,7 +40,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	// Components to work with list
 	private NoteArrayAdapter mAdapter;
-	private boolean[] mSavedSelectedNotes;
+	private boolean[] mSelectedItems;
 
 	// Service interconnection
 	INoteService mService;
@@ -112,19 +113,16 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-
-		boolean[] selectedNotes = mAdapter.getSelectedNotes();
-		outState.putBooleanArray(TAG, selectedNotes);
+		mSelectedItems = mAdapter.getSelection();
+		outState.putBooleanArray(TAG_SELECTED_ITEMS, mSelectedItems);
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-
-		// It will be optimized
-		if (savedInstanceState.containsKey(TAG)) {
-			mSavedSelectedNotes = savedInstanceState.getBooleanArray(TAG);
+		if (savedInstanceState.containsKey(TAG_SELECTED_ITEMS)) {
+			mSelectedItems = savedInstanceState.getBooleanArray(TAG_SELECTED_ITEMS);
 		}
+		super.onRestoreInstanceState(savedInstanceState);
 	}
 
 	@Override
@@ -150,32 +148,30 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.removeNotesButton:
+			deleteNotes();
 			break;
 
 		default:
 			break;
 		}
-
 	}
 
 	private void updateNotesList() {
 		if (mService == null) return;
 		
+		List<Note> values = new ArrayList<Note>();
 		Log.d(TAG, "Update list");
 		
+		// Parse json and fill values
 		try {
 			String notesJson = mService.getNotes();
-			
-			List<Note> values = new ArrayList<Note>();
 			JSONArray notesJsonArray = new JSONArray(notesJson);
 			for (int i = 0; i < notesJsonArray.length(); ++i) {
 				JSONObject noteJsonObject = notesJsonArray.getJSONObject(i);
-				String id = noteJsonObject.getString("id");
+				int id = noteJsonObject.getInt("id");
 				String title = noteJsonObject.getString("title");
 				values.add(new Note(id, title));
 			}
-			mAdapter = new NoteArrayAdapter(this, values);
-			mNotesListView.setAdapter(mAdapter);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -183,6 +179,23 @@ public class MainActivity extends Activity implements OnClickListener {
 		catch (JSONException e) {
 			e.printStackTrace();
 		}
+		
+		mAdapter = new NoteArrayAdapter(this, values, mSelectedItems);
+		mNotesListView.setAdapter(mAdapter);
 	}
-
+	
+	private void deleteNotes() {
+		Set<Integer> selectedNotes = mAdapter.getSelectedNotes();
+		JSONArray notesJson = new JSONArray();
+		Iterator<Integer> it = selectedNotes.iterator();
+		while (it.hasNext()) {
+			notesJson.put(it.next());
+		}
+		try {
+			mService.deleteNotes(notesJson.toString());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		updateNotesList();
+	}
 }

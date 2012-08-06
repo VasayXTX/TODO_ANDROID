@@ -78,21 +78,26 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.addNoteButton:
-			String title = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
-			String description = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
-			if (TextUtils.isEmpty(title)) {
-				Toast.makeText(this, "Title may not be empty!", Toast.LENGTH_SHORT).show();
-			} else {
-				try {
-					mService.addNote(title, description);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
+			addNote();
 			break;
 
 		default:
 			break;
 		}
+	}
+	
+	private void addNote() {
+		String title = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
+		String description = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
+		if (TextUtils.isEmpty(title)) {
+			Toast.makeText(this, "Title may not be empty!", Toast.LENGTH_SHORT).show();
+		} else {
+			try {
+				mService.addNote(title, description);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		finish();
 	}
 }

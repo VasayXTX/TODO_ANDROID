@@ -1,18 +1,18 @@
 package com.example.todo;
 
 public class Note {
-	private String mId;
+	private int mId;
 	private String mTitle;
 	private String mDescription;
 
 	public Note() {}
 
-	public Note(String id, String title) {
+	public Note(int id, String title) {
 		mId = id;
 		mTitle = title;
 	}
 
-	public Note(String id, String title, String description) {
+	public Note(int id, String title, String description) {
 		mId = id;
 		mTitle = title;
 		mDescription = description;
@@ -34,11 +34,11 @@ public class Note {
 		mTitle = title;
 	}
 
-	public String getId() {
+	public int getId() {
 		return mId;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		mId = id;
 	}
 }
