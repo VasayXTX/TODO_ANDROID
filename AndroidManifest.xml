@@ -20,9 +20,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="TesterNoteProviderActivity"></activity>
-        <provider android:name=".NoteProvider"
-		   android:authorities="com.example.todo.NoteProvider"/>
+        <activity android:name="TesterNoteProviderActivity" >
+        </activity>
+
+        <provider
+            android:name=".NoteProvider"
+            android:authorities="com.example.todo.NoteProvider" />
+
+        <service
+            android:name=".NoteService"
+            android:process=":remote" >
+        </service>
+        <activity android:name="NewNoteActivity"></activity>
     </application>
 
 </manifest>

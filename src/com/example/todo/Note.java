@@ -1,29 +1,44 @@
 package com.example.todo;
 
 public class Note {
-	private String title;
-	private String description;
-	
+	private String mId;
+	private String mTitle;
+	private String mDescription;
+
 	public Note() {}
-	
-	public Note(String title, String description) {
-		this.title = title;
-		this.description = description;
+
+	public Note(String id, String title) {
+		mId = id;
+		mTitle = title;
 	}
-	
+
+	public Note(String id, String title, String description) {
+		mId = id;
+		mTitle = title;
+		mDescription = description;
+	}
+
 	public String getDescription() {
-		return description;
+		return mDescription;
 	}
-	
+
 	public void setDescription(String description) {
-		this.description = description;
+		mDescription = description;
 	}
-	
+
 	public String getTitle() {
-		return title;
+		return mTitle;
 	}
-	
+
 	public void setTitle(String title) {
-		this.title = title;
+		mTitle = title;
+	}
+
+	public String getId() {
+		return mId;
+	}
+
+	public void setId(String id) {
+		mId = id;
 	}
 }
