@@ -31,16 +31,16 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			mService = INoteService.Stub.asInterface((IBinder) service);
 			Log.d(TAG, "onServiceConnected() connected");
-			Toast.makeText(NewNoteActivity.this, "Service connected",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(NewNoteActivity.this, R.string.info_service_connected,
+					Toast.LENGTH_SHORT).show();
 			mAddNoteButton.setEnabled(true);
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
 			mService = null;
 			Log.d(TAG, "onServiceDisconnected() disconnected");
-			Toast.makeText(NewNoteActivity.this, "Service disconnected",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(NewNoteActivity.this, R.string.info_service_disconnected,
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -87,17 +87,20 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 	}
 	
 	private void addNote() {
+		if (mService == null) return;
+		
 		String title = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
 		String description = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
 		if (TextUtils.isEmpty(title)) {
-			Toast.makeText(this, "Title may not be empty!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.err_title_present, Toast.LENGTH_SHORT).show();
 		} else {
 			try {
 				mService.addNote(title, description);
+				Toast.makeText(this, R.string.info_note_added, Toast.LENGTH_SHORT).show();
+				finish();
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
-		finish();
 	}
 }

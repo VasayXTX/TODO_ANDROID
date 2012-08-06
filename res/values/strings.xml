@@ -4,5 +4,12 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="add_note">Add note</string>
+    
+    <string name="info_note_added">YEP! Note was added</string>
+    <string name="info_service_connected">Service connected</string>
+    <string name="info_service_disconnected">Service disconnected</string>
+    
+    <string name="err_title_present">Title may not be empty!</string>
+    
 
 </resources>

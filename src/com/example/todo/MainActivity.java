@@ -50,16 +50,16 @@ public class MainActivity extends Activity implements OnClickListener {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			mService = INoteService.Stub.asInterface((IBinder) service);
 			Log.d(TAG, "onServiceConnected() connected");
-			Toast.makeText(MainActivity.this, "Service connected",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(MainActivity.this, R.string.info_service_connected,
+					Toast.LENGTH_SHORT).show();
 			updateNotesList();
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
 			mService = null;
 			Log.d(TAG, "onServiceDisconnected() disconnected");
-			Toast.makeText(MainActivity.this, "Service disconnected",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(MainActivity.this, R.string.info_service_disconnected,
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -185,6 +185,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 	
 	private void deleteNotes() {
+		if (mService == null) return;
+		
 		Set<Integer> selectedNotes = mAdapter.getSelectedNotes();
 		JSONArray notesJson = new JSONArray();
 		Iterator<Integer> it = selectedNotes.iterator();
