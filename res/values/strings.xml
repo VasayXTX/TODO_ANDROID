@@ -3,13 +3,20 @@
     <string name="app_name">TODO</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    
     <string name="add_note">Add note</string>
+    <string name="update_note">Update note</string>
+    
     
     <string name="info_note_added">YEP! Note was added</string>
+    <string name="info_note_updated">YEP! Note was updated</string>
     <string name="info_service_connected">Service connected</string>
     <string name="info_service_disconnected">Service disconnected</string>
     
     <string name="err_title_present">Title may not be empty!</string>
+    <string name="edit_note">Edit note</string>
+    <string name="hint_enter_title">Enter title of note</string>
+    <string name="enter_description">Enter description of note</string>
     
 
 </resources>

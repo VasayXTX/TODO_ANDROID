@@ -1,5 +1,10 @@
 package com.example.todo;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.example.todo.NoteProviderMetaData.NoteTable;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +26,13 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 	
 	private static final String TAG = "NewNoteActivity";
 	
-	Button mAddNoteButton;
+	private boolean mIsNewNote;
+	private int mNoteId;
+	
+	// UI elements
+	Button mAddUpdateNoteButton;
+	EditText mTitleEditText;
+	EditText mDescriptionEditText;
 	
 	// Service interconnection
 	INoteService mService;
@@ -33,7 +45,7 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 			Log.d(TAG, "onServiceConnected() connected");
 			Toast.makeText(NewNoteActivity.this, R.string.info_service_connected,
 					Toast.LENGTH_SHORT).show();
-			mAddNoteButton.setEnabled(true);
+			mAddUpdateNoteButton.setEnabled(true);
 		}
 
 		public void onServiceDisconnected(ComponentName name) {
@@ -64,9 +76,23 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 		
 		initService();
 		
-		mAddNoteButton = (Button) findViewById(R.id.addNoteButton);
-		mAddNoteButton.setOnClickListener(this);
-		mAddNoteButton.setEnabled(false);
+		// Init UI elements
+		mAddUpdateNoteButton = (Button) findViewById(R.id.addNoteButton);
+		mAddUpdateNoteButton.setOnClickListener(this);
+		mAddUpdateNoteButton.setEnabled(false);
+		
+		mTitleEditText = (EditText) findViewById(R.id.titleTextView);
+		mDescriptionEditText = (EditText) findViewById(R.id.descriptionTextView);
+		
+		// Detect type of action ("add new note" || "edit existing note")
+		Bundle extras = getIntent().getExtras();
+		mIsNewNote = extras.getBoolean("isNewNote");
+		if (!mIsNewNote) {
+			mNoteId = extras.getInt(NoteTable._ID);
+			mTitleEditText.setText(extras.getString(NoteTable.TITLE));
+			mDescriptionEditText.setText(extras.getString(NoteTable.DESCRIPTION));
+			mAddUpdateNoteButton.setText(R.string.update_note);
+		}
 	}
 	
 	@Override
@@ -89,18 +115,34 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 	private void addNote() {
 		if (mService == null) return;
 		
-		String title = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
-		String description = ((TextView) findViewById(R.id.titleTextView)).getText().toString();
+		String title = mTitleEditText.getText().toString();
+		String description = mDescriptionEditText.getText().toString();
+		
 		if (TextUtils.isEmpty(title)) {
 			Toast.makeText(this, R.string.err_title_present, Toast.LENGTH_SHORT).show();
-		} else {
-			try {
-				mService.addNote(title, description);
-				Toast.makeText(this, R.string.info_note_added, Toast.LENGTH_SHORT).show();
-				finish();
-			} catch (RemoteException e) {
-				e.printStackTrace();
+			return;
+		}
+		
+		try {
+			JSONObject noteJson = new JSONObject();
+			noteJson.put(NoteTable.TITLE, title);
+			noteJson.put(NoteTable.DESCRIPTION, description);
+			int msgResId;
+			if (mIsNewNote) {
+				msgResId = R.string.info_note_added;
+				mService.addNote(noteJson.toString());
+			} else {
+				msgResId = R.string.info_note_updated;
+				noteJson.put(NoteTable._ID, mNoteId);
+				mService.updateNote(noteJson.toString());
 			}
+			Toast.makeText(this, msgResId, Toast.LENGTH_SHORT).show();
+			finish();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
 		}
 	}
 }

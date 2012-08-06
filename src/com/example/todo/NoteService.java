@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.example.todo.NoteProviderMetaData.NoteTable;
@@ -18,17 +19,22 @@ import com.example.todo.NoteProviderMetaData.NoteTable;
 public class NoteService extends Service {
 	private static final String TAG = "NoteService";
 
+	// Implementation of Android Interface
 	public class NoteServiceImpl extends INoteService.Stub {
 		public String getNotes() {
 			return NoteService.this.getNotes();
 		}
-		
-		public void addNote(String title, String description) {
-			NoteService.this.addNote(title, description);
+
+		public void addNote(String note) {
+			NoteService.this.addNote(note);
 		}
 
 		public void deleteNotes(String notes) {
 			NoteService.this.deleteNotes(notes);
+		}
+
+		public void updateNote(String note) {
+			NoteService.this.updateNote(note);
 		}
 	}
 
@@ -53,19 +59,20 @@ public class NoteService extends Service {
 		Uri uri = NoteTable.CONTENT_URI;
 		ContentResolver cr = getContentResolver();
 		String[] projection = new String[] { NoteTable._ID, NoteTable.TITLE,
-				NoteTable.MODIFIED_DATE };
+				NoteTable.DESCRIPTION, NoteTable.MODIFIED_DATE };
 		Cursor c = cr.query(uri, projection, null, null, null);
 
 		int iId = c.getColumnIndex(NoteTable._ID);
 		int iTitle = c.getColumnIndex(NoteTable.TITLE);
-//		int iModifiedDate = c.getColumnIndex(NoteTable.MODIFIED_DATE);
+		int iDescription = c.getColumnIndex(NoteTable.DESCRIPTION);
 
 		JSONArray res = new JSONArray();
 		try {
 			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
 				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("id", c.getString(iId));
-				jsonObject.put("title", c.getString(iTitle));
+				jsonObject.put(NoteTable._ID, c.getString(iId));
+				jsonObject.put(NoteTable.TITLE, c.getString(iTitle));
+				jsonObject.put(NoteTable.DESCRIPTION, c.getString(iDescription));
 				res.put(jsonObject);
 			}
 		} catch (JSONException e) {
@@ -74,17 +81,24 @@ public class NoteService extends Service {
 
 		return res.toString();
 	}
-	
-	private void addNote(String title, String description) {
+
+	private void addNote(String note) {
 		ContentValues cv = new ContentValues();
-		cv.put(NoteTable.TITLE, title);
-		cv.put(NoteTable.DESCRIPTION, description);
-		
+
+		try {
+			JSONObject noteJson = new JSONObject(note);
+			cv.put(NoteTable.TITLE, noteJson.getString(NoteTable.TITLE));
+			cv.put(NoteTable.DESCRIPTION,
+					noteJson.getString(NoteTable.DESCRIPTION));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
 		ContentResolver cr = getContentResolver();
 		Uri uri = NoteTable.CONTENT_URI;
 		cr.insert(uri, cv);
 	}
-	
+
 	private void deleteNotes(String notes) {
 		ContentResolver cr = getContentResolver();
 		try {
@@ -97,6 +111,24 @@ public class NoteService extends Service {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
+	}
+
+	private void updateNote(String note) {
+		ContentValues cv = new ContentValues();
+		int id = -1;
+
+		try {
+			JSONObject noteJsonObject = new JSONObject(note);
+			id = noteJsonObject.getInt(NoteTable._ID);
+			cv.put(NoteTable.TITLE, noteJsonObject.getString(NoteTable.TITLE));
+			cv.put(NoteTable.DESCRIPTION, noteJsonObject.getString(NoteTable.DESCRIPTION));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		ContentResolver cr = getContentResolver();
+		Uri uri = Uri.withAppendedPath(NoteTable.CONTENT_URI,
+				Integer.toString(id));
+		cr.update(uri, cv, null, null);
 	}
 }

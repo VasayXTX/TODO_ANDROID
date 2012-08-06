@@ -18,8 +18,6 @@ import android.text.TextUtils;
 import com.example.todo.NoteProviderMetaData.NoteTable;
 
 public class NoteProvider extends ContentProvider {
-	private static final String TAG = "NoteProvider";
-
 	// Initialize Notes projcetion map
 	private static HashMap<String, String> sNotesProjectionMap = new HashMap<String, String>();
 	static {
@@ -157,6 +155,10 @@ public class NoteProvider extends ContentProvider {
 			String[] whereArgs) {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count;
+		
+		if (!values.containsKey(NoteTable.MODIFIED_DATE)) {
+			values.put(NoteTable.MODIFIED_DATE, System.currentTimeMillis());
+		}
 
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_NOTE_COLLECTION_URI_INDICATOR:

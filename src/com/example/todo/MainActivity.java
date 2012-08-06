@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.todo.NoteProviderMetaData.NoteTable;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -144,6 +146,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.newNoteButton:
 			Intent intent = new Intent(MainActivity.this, NewNoteActivity.class);
+			intent.putExtra("isNewNote", true);
 			startActivity(intent);
 			break;
 
@@ -168,9 +171,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			JSONArray notesJsonArray = new JSONArray(notesJson);
 			for (int i = 0; i < notesJsonArray.length(); ++i) {
 				JSONObject noteJsonObject = notesJsonArray.getJSONObject(i);
-				int id = noteJsonObject.getInt("id");
-				String title = noteJsonObject.getString("title");
-				values.add(new Note(id, title));
+				int id = noteJsonObject.getInt(NoteTable._ID);
+				String title = noteJsonObject.getString(NoteTable.TITLE);
+				String description = noteJsonObject.getString(NoteTable.DESCRIPTION);
+				values.add(new Note(id, title, description));
 			}
 		}
 		catch (RemoteException e) {
