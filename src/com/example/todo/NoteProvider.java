@@ -14,12 +14,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.todo.NoteProviderMetaData.NoteTable;
 
 public class NoteProvider extends ContentProvider {
-	private static final String TAG = "TODO.NoteProvider";
 	
 	// Initialize Notes projcetion map
 	private static HashMap<String, String> sNotesProjectionMap = new HashMap<String, String>();
@@ -54,13 +52,11 @@ public class NoteProvider extends ContentProvider {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Log.d(TAG, "onCreate");
 			NoteTable.create(db);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.d(TAG, "onUpgrade");
 			NoteTable.upgrade(db);
 		}
 	}

@@ -218,6 +218,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		mAdapter = new NoteArrayAdapter(this, values, mSelectedItems);
 		mNotesListView.setAdapter(mAdapter);
+		
+		mRemoveNotesButton.setEnabled(!values.isEmpty());
 	}
 	
 	private void deleteNotes() {

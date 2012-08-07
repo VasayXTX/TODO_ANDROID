@@ -3,12 +3,9 @@ package com.example.todo;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 public class NoteProviderMetaData {
 	public static final String AUTHORITY = "com.example.todo.NoteProvider";
-	private static final String TAG = "TODO.NoteProviderMetaData";
-	
 	
 	// Database information
 	public static final String DATABASE_NAME = "note.db";
@@ -37,7 +34,6 @@ public class NoteProviderMetaData {
         public static final String DEFAULT_SORT_ORDER = MODIFIED_DATE + " DESC";
         
         public static final void create(SQLiteDatabase db) {
-        	Log.d(TAG, "creation. BEGIN");
         	db.execSQL("CREATE TABLE " + TABLE_NAME + " ("
                     + _ID + " INTEGER PRIMARY KEY,"
                     + TITLE + " TEXT,"
@@ -46,7 +42,6 @@ public class NoteProviderMetaData {
                     + CREATED_DATE + " INTEGER,"
                     + MODIFIED_DATE + " INTEGER"
                     + ");");
-        	Log.d(TAG, "creation. END");
         }
         
         public static final void upgrade(SQLiteDatabase db) {

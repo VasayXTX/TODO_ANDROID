@@ -24,8 +24,7 @@ import android.widget.Toast;
 import com.example.todo.NoteProviderMetaData.NoteTable;
 
 public class NewNoteActivity extends Activity implements OnClickListener {
-	
-	private static final String TAG = "NewNoteActivity";
+	private static final String TAG = "TODO.NewNoteActivity";
 	
 	private boolean mIsNewNote;
 	private int mNoteId;

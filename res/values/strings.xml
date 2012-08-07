@@ -23,5 +23,6 @@
 
     <string name="about_1">It\'s open source project</string>
     <string name="about_2">https://github.com/VasayXTX/TODO_ANDROID</string>
+    <string name="remove_notes">Remove notes</string>
 
 </resources>
