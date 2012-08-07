@@ -22,6 +22,8 @@
         </activity>
         <activity android:name="TesterNoteProviderActivity" >
         </activity>
+        <activity android:name="AboutActivity" >
+        </activity>
 
         <provider
             android:name=".NoteProvider"

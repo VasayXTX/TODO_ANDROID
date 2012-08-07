@@ -156,7 +156,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.sortByDateDescMenuItem:
 			updateSortedNoteList(NoteTable.MODIFIED_DATE, "DESC");
 			break;
-		
+			
+		case R.id.aboutMenuItem:
+			Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+			startActivity(intent);
+			
 		default:
 			break;
 		}
