@@ -1,6 +1,31 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
-        android:orderInCategory="100" />
-    <item android:id="@+id/testNoteProvider" android:title="Test NoteProvider"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- <item android:id="@+id/testNoteProviderMenuItem" android:title="Test NoteProvider"></item> -->
+    <item
+        android:id="@+id/sortMenuItem"
+        android:title="Sort">
+        <menu>
+            <item
+                android:id="@+id/sortByTitleAscMenuItem"
+                android:title="By title ASC">
+            </item>
+            <item
+                android:id="@+id/sortByTitleDescMenuItem"
+                android:title="By title DESC">
+            </item>
+            <item
+                android:id="@+id/sortByDateAscMenuItem"
+                android:title="By date ASC">
+            </item>
+            <item
+                android:id="@+id/sortByDateDescMenuItem"
+                android:title="By date DESC">
+            </item>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/aboutMenuItem"
+        android:title="About">
+    </item>
+
 </menu>

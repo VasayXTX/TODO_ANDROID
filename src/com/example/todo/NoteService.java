@@ -21,8 +21,8 @@ public class NoteService extends Service {
 
 	// Implementation of Android Interface
 	public class NoteServiceImpl extends INoteService.Stub {
-		public String getNotes() {
-			return NoteService.this.getNotes();
+		public String getNotes(String sortOrder) {
+			return NoteService.this.getNotes(sortOrder);
 		}
 
 		public void addNote(String note) {
@@ -55,12 +55,12 @@ public class NoteService extends Service {
 		Log.d(TAG, "onDestroy()");
 	}
 
-	private String getNotes() {
+	private String getNotes(String sortOrder) {
 		Uri uri = NoteTable.CONTENT_URI;
 		ContentResolver cr = getContentResolver();
 		String[] projection = new String[] { NoteTable._ID, NoteTable.TITLE,
 				NoteTable.DESCRIPTION, NoteTable.MODIFIED_DATE };
-		Cursor c = cr.query(uri, projection, null, null, null);
+		Cursor c = cr.query(uri, projection, null, null, sortOrder);
 
 		int iId = c.getColumnIndex(NoteTable._ID);
 		int iTitle = c.getColumnIndex(NoteTable.TITLE);

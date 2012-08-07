@@ -34,6 +34,10 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	private static final String TAG = "TODO.MainActivity";
 	private static final String TAG_SELECTED_ITEMS = "TODO.SelectedItems";
+	private static final String TAG_SORT_ORDER = "TODO.SortOrder";
+	
+	
+	private String mSortOrder = null;
 
 	// UI elements
 	private ListView mNotesListView;
@@ -117,6 +121,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.onSaveInstanceState(outState);
 		mSelectedItems = mAdapter.getSelection();
 		outState.putBooleanArray(TAG_SELECTED_ITEMS, mSelectedItems);
+		outState.putString(TAG_SORT_ORDER, mSortOrder);
 	}
 
 	@Override
@@ -124,21 +129,42 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (savedInstanceState.containsKey(TAG_SELECTED_ITEMS)) {
 			mSelectedItems = savedInstanceState.getBooleanArray(TAG_SELECTED_ITEMS);
 		}
+		if (savedInstanceState.containsKey(TAG_SORT_ORDER)) {
+			mSortOrder = savedInstanceState.getString(TAG_SORT_ORDER);
+		}
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.testNoteProvider:
-			Intent intent = new Intent(MainActivity.this,
-					TesterNoteProviderActivity.class);
-			startActivity(intent);
+//		case R.id.testNoteProvider:
+//			Intent intent = new Intent(MainActivity.this,
+//					TesterNoteProviderActivity.class);
+//			startActivity(intent);
+//			break;
+		
+		case R.id.sortByTitleAscMenuItem:
+			mSortOrder = NoteTable.TITLE + " ASC";
 			break;
-
+			
+		case R.id.sortByTitleDescMenuItem:
+			mSortOrder = NoteTable.TITLE + " DESC";
+			break;
+			
+		case R.id.sortByDateAscMenuItem:
+			mSortOrder = NoteTable.MODIFIED_DATE + " ASC";
+			break;
+			
+		case R.id.sortByDateDescMenuItem:
+			mSortOrder = NoteTable.MODIFIED_DATE + " DESC";
+			break;
+		
 		default:
 			break;
 		}
+		updateNotesList();
+		
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -167,7 +193,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		// Parse json and fill values
 		try {
-			String notesJson = mService.getNotes();
+			String notesJson = mService.getNotes(mSortOrder);
 			JSONArray notesJsonArray = new JSONArray(notesJson);
 			for (int i = 0; i < notesJsonArray.length(); ++i) {
 				JSONObject noteJsonObject = notesJsonArray.getJSONObject(i);
