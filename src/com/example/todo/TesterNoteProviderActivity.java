@@ -80,6 +80,7 @@ public class TesterNoteProviderActivity extends Activity implements OnClickListe
 		ContentValues cv = new ContentValues();
 		cv.put(NoteTable.TITLE, "note" + curNotesCount);
 		cv.put(NoteTable.DESCRIPTION, "description" + curNotesCount);
+		cv.put(NoteTable.TYPE, curNotesCount);
 		
 		ContentResolver cr = getContentResolver();
 		Uri uri = NoteTable.CONTENT_URI;
@@ -97,10 +98,14 @@ public class TesterNoteProviderActivity extends Activity implements OnClickListe
 		
 		int iTitle = c.getColumnIndex(NoteTable.TITLE);
 		int iDescription = c.getColumnIndex(NoteTable.DESCRIPTION);
+		int iType = c.getColumnIndex(NoteTable.TYPE);
 		
 		String res = "";
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-			res += "TITLE:" + c.getString(iTitle) + "\tDESCRIPTION: " + c.getString(iDescription) + "\n"; 
+			String title = "TITLE:" + c.getString(iTitle);
+			String description = "DESCRIPTION:" + c.getString(iDescription);
+			String type = "TYPE:" + c.getString(iType);
+			res += title + "\t: " + description + "\t" + type + "\n"; 
 		}
 		
 		mTextView.setText(res);

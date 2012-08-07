@@ -3,8 +3,6 @@ package com.example.todo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.todo.NoteProviderMetaData.NoteTable;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,10 +15,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.example.todo.NoteProviderMetaData.NoteTable;
 
 public class NewNoteActivity extends Activity implements OnClickListener {
 	
@@ -33,6 +34,7 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 	Button mAddUpdateNoteButton;
 	EditText mTitleEditText;
 	EditText mDescriptionEditText;
+	Spinner mSpinner;
 	
 	// Service interconnection
 	INoteService mService;
@@ -84,6 +86,13 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 		mTitleEditText = (EditText) findViewById(R.id.titleTextView);
 		mDescriptionEditText = (EditText) findViewById(R.id.descriptionTextView);
 		
+		// Init spinner
+		mSpinner = (Spinner) findViewById(R.id.noteTypeSpinner);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.note_types_array, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSpinner.setAdapter(adapter);
+		mSpinner.setSelection(0);
+		
 		// Detect type of action ("add new note" || "edit existing note")
 		Bundle extras = getIntent().getExtras();
 		mIsNewNote = extras.getBoolean("isNewNote");
@@ -92,6 +101,7 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 			mTitleEditText.setText(extras.getString(NoteTable.TITLE));
 			mDescriptionEditText.setText(extras.getString(NoteTable.DESCRIPTION));
 			mAddUpdateNoteButton.setText(R.string.update_note);
+			mSpinner.setSelection(extras.getInt(NoteTable.TYPE));
 		}
 	}
 	
@@ -127,6 +137,7 @@ public class NewNoteActivity extends Activity implements OnClickListener {
 			JSONObject noteJson = new JSONObject();
 			noteJson.put(NoteTable.TITLE, title);
 			noteJson.put(NoteTable.DESCRIPTION, description);
+			noteJson.put(NoteTable.TYPE, mSpinner.getSelectedItemPosition());
 			int msgResId;
 			if (mIsNewNote) {
 				msgResId = R.string.info_note_added;

@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.example.todo.NoteProviderMetaData.NoteTable;
@@ -58,13 +57,14 @@ public class NoteService extends Service {
 	private String getNotes(String sortOrder) {
 		Uri uri = NoteTable.CONTENT_URI;
 		ContentResolver cr = getContentResolver();
-		String[] projection = new String[] { NoteTable._ID, NoteTable.TITLE,
-				NoteTable.DESCRIPTION, NoteTable.MODIFIED_DATE };
+		String[] projection = new String[] { NoteTable._ID, NoteTable.TITLE, 
+				NoteTable.DESCRIPTION, NoteTable.MODIFIED_DATE, NoteTable.TYPE };
 		Cursor c = cr.query(uri, projection, null, null, sortOrder);
 
 		int iId = c.getColumnIndex(NoteTable._ID);
 		int iTitle = c.getColumnIndex(NoteTable.TITLE);
 		int iDescription = c.getColumnIndex(NoteTable.DESCRIPTION);
+		int iType = c.getColumnIndex(NoteTable.TYPE);
 
 		JSONArray res = new JSONArray();
 		try {
@@ -73,6 +73,7 @@ public class NoteService extends Service {
 				jsonObject.put(NoteTable._ID, c.getString(iId));
 				jsonObject.put(NoteTable.TITLE, c.getString(iTitle));
 				jsonObject.put(NoteTable.DESCRIPTION, c.getString(iDescription));
+				jsonObject.put(NoteTable.TYPE, c.getInt(iType));
 				res.put(jsonObject);
 			}
 		} catch (JSONException e) {
@@ -82,7 +83,7 @@ public class NoteService extends Service {
 		return res.toString();
 	}
 
-	private void addNote(String note) {
+	private void addNote(String note) {		
 		ContentValues cv = new ContentValues();
 
 		try {
@@ -90,6 +91,7 @@ public class NoteService extends Service {
 			cv.put(NoteTable.TITLE, noteJson.getString(NoteTable.TITLE));
 			cv.put(NoteTable.DESCRIPTION,
 					noteJson.getString(NoteTable.DESCRIPTION));
+			cv.put(NoteTable.TYPE, noteJson.getInt(NoteTable.TYPE));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -122,6 +124,7 @@ public class NoteService extends Service {
 			id = noteJsonObject.getInt(NoteTable._ID);
 			cv.put(NoteTable.TITLE, noteJsonObject.getString(NoteTable.TITLE));
 			cv.put(NoteTable.DESCRIPTION, noteJsonObject.getString(NoteTable.DESCRIPTION));
+			cv.put(NoteTable.TYPE, noteJsonObject.getInt(NoteTable.TYPE));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

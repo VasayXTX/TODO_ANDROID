@@ -1,8 +1,6 @@
 package com.example.todo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -10,8 +8,6 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.example.todo.NoteProviderMetaData.NoteTable;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -30,12 +26,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.todo.NoteProviderMetaData.NoteTable;
+
 public class MainActivity extends Activity implements OnClickListener {
 
 	private static final String TAG = "TODO.MainActivity";
 	private static final String TAG_SELECTED_ITEMS = "TODO.SelectedItems";
 	private static final String TAG_SORT_ORDER = "TODO.SortOrder";
-	
 	
 	private String mSortOrder = null;
 
@@ -138,32 +135,31 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-//		case R.id.testNoteProvider:
+//		case R.id.testNoteProviderMenuItem:
 //			Intent intent = new Intent(MainActivity.this,
 //					TesterNoteProviderActivity.class);
 //			startActivity(intent);
 //			break;
 		
 		case R.id.sortByTitleAscMenuItem:
-			mSortOrder = NoteTable.TITLE + " ASC";
+			updateSortedNoteList(NoteTable.TITLE, "ASC");
 			break;
 			
 		case R.id.sortByTitleDescMenuItem:
-			mSortOrder = NoteTable.TITLE + " DESC";
+			updateSortedNoteList(NoteTable.TITLE, "DESC");
 			break;
 			
 		case R.id.sortByDateAscMenuItem:
-			mSortOrder = NoteTable.MODIFIED_DATE + " ASC";
+			updateSortedNoteList(NoteTable.MODIFIED_DATE, "ASC");
 			break;
 			
 		case R.id.sortByDateDescMenuItem:
-			mSortOrder = NoteTable.MODIFIED_DATE + " DESC";
+			updateSortedNoteList(NoteTable.MODIFIED_DATE, "DESC");
 			break;
 		
 		default:
 			break;
 		}
-		updateNotesList();
 		
 		return super.onOptionsItemSelected(item);
 	}
@@ -184,7 +180,12 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 		}
 	}
-
+	
+	private void updateSortedNoteList(String field, String dir) {
+		mSortOrder = field + " " + dir;
+		updateNotesList();
+	}
+	
 	private void updateNotesList() {
 		if (mService == null) return;
 		
@@ -200,7 +201,8 @@ public class MainActivity extends Activity implements OnClickListener {
 				int id = noteJsonObject.getInt(NoteTable._ID);
 				String title = noteJsonObject.getString(NoteTable.TITLE);
 				String description = noteJsonObject.getString(NoteTable.DESCRIPTION);
-				values.add(new Note(id, title, description));
+				int type = noteJsonObject.getInt(NoteTable.TYPE);
+				values.add(new Note(id, title, description, type));
 			}
 		}
 		catch (RemoteException e) {

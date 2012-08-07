@@ -14,16 +14,20 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.todo.NoteProviderMetaData.NoteTable;
 
 public class NoteProvider extends ContentProvider {
+	private static final String TAG = "TODO.NoteProvider";
+	
 	// Initialize Notes projcetion map
 	private static HashMap<String, String> sNotesProjectionMap = new HashMap<String, String>();
 	static {
 		sNotesProjectionMap.put(NoteTable._ID, NoteTable._ID);
 		sNotesProjectionMap.put(NoteTable.TITLE, NoteTable.TITLE);
 		sNotesProjectionMap.put(NoteTable.DESCRIPTION, NoteTable.DESCRIPTION);
+		sNotesProjectionMap.put(NoteTable.TYPE, NoteTable.TYPE);
 		sNotesProjectionMap.put(NoteTable.CREATED_DATE, NoteTable.CREATED_DATE);
 		sNotesProjectionMap.put(NoteTable.MODIFIED_DATE,
 				NoteTable.MODIFIED_DATE);
@@ -50,11 +54,13 @@ public class NoteProvider extends ContentProvider {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			Log.d(TAG, "onCreate");
 			NoteTable.create(db);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			Log.d(TAG, "onUpgrade");
 			NoteTable.upgrade(db);
 		}
 	}
@@ -108,7 +114,6 @@ public class NoteProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 		Cursor c = qb.query(db, projection, selection, selectionArgs, null,
 				null, orderBy);
-		// ???
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 
 		return c;
@@ -130,6 +135,9 @@ public class NoteProvider extends ContentProvider {
 					"Failed to insert row because title of note is needed "
 							+ uri);
 		}
+		if (!values.containsKey(NoteTable.TYPE)) {
+			values.put(NoteTable.TYPE, 0);
+		}
 		if (!values.containsKey(NoteTable.CREATED_DATE)) {
 			values.put(NoteTable.CREATED_DATE, now);
 		}
@@ -145,7 +153,7 @@ public class NoteProvider extends ContentProvider {
 		}
 		Uri insertedNoteUri = ContentUris.withAppendedId(NoteTable.CONTENT_URI,
 				insertedId);
-		// ???
+		
 		getContext().getContentResolver().notifyChange(insertedNoteUri, null);
 		return insertedNoteUri;
 	}

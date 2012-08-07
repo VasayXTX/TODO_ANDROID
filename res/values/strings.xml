@@ -18,5 +18,11 @@
     <string name="hint_enter_title">Enter title of note</string>
     <string name="enter_description">Enter description of note</string>
     
+    <string-array name="note_types_array">
+        <item>It</item>
+        <item>Home</item>
+        <item>Work</item>
+        <item>Other</item>
+    </string-array>
 
 </resources>

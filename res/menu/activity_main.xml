@@ -1,6 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <!-- <item android:id="@+id/testNoteProviderMenuItem" android:title="Test NoteProvider"></item> -->
+    <!-- <item
+        android:id="@+id/testNoteProviderMenuItem"
+        android:title="Test NoteProvider">
+    </item> -->
     <item
         android:id="@+id/sortMenuItem"
         android:title="Sort">

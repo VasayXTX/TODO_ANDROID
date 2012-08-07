@@ -21,11 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class NoteArrayAdapter extends ArrayAdapter<Note> {
-	private static final String TAG = "NoteArrayAdapter";
-
 	private final Activity context;
-	// private final int[] ICONS = { R.drawable.git, R.drawable.android,
-	// R.drawable.apple, R.drawable.coffee };
+	 private final int[] ICONS = { R.drawable.it, R.drawable.home,
+	 R.drawable.work, R.drawable.other};
 
 	private List<Note> list;
 	private boolean[] selectedNotes;
@@ -50,6 +48,7 @@ public class NoteArrayAdapter extends ArrayAdapter<Note> {
 			intent.putExtra(NoteTable._ID, note.getId());
 			intent.putExtra(NoteTable.TITLE, note.getTitle());
 			intent.putExtra(NoteTable.DESCRIPTION, note.getDescription());
+			intent.putExtra(NoteTable.TYPE, note.getType());
 			context.startActivity(intent);
 		}
 	};
@@ -104,8 +103,7 @@ public class NoteArrayAdapter extends ArrayAdapter<Note> {
 		ViewHolder holder = (ViewHolder) view.getTag();
 		Note note = list.get(position);
 		holder.textView.setText(note.getTitle());
-		holder.icon.setImageResource(R.drawable.main_icon);
-		// holder.icon.setImageResource(ICONS[listItem.getIconIndex()]);
+		holder.icon.setImageResource(ICONS[note.getType()]);
 		holder.checkbox.setChecked(selectedNotes[position]);
 
 		return view;

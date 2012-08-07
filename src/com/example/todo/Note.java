@@ -4,18 +4,15 @@ public class Note {
 	private int mId;
 	private String mTitle;
 	private String mDescription;
+	private int mType;
 
 	public Note() {}
 
-	public Note(int id, String title) {
-		mId = id;
-		mTitle = title;
-	}
-
-	public Note(int id, String title, String description) {
+	public Note(int id, String title, String description, int type) {
 		mId = id;
 		mTitle = title;
 		mDescription = description;
+		mType = type;
 	}
 
 	public String getDescription() {
@@ -40,5 +37,13 @@ public class Note {
 
 	public void setId(int id) {
 		mId = id;
+	}
+
+	public int getType() {
+		return mType;
+	}
+
+	public void setType(int type) {
+		mType = type;
 	}
 }
